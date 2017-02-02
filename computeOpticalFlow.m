@@ -21,7 +21,7 @@
 %read an image sequence in the ilids video / PRID dataset
 %compute optical flow
 
-rootDir = fullfile('C:','Users','3047122','Documents','Test Data');
+rootDir = '/home/yfeng23/lab/dataset/';
 
 for person = 1:319
     disp(person)

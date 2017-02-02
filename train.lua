@@ -27,6 +27,8 @@ require 'cutorch'
 require 'image'
 require 'paths'
 require 'rnn'
+local graphgen = require 'optnet.graphgen'
+local iterm = require 'iterm'
 
 local datasetUtils = require 'datasetUtils'
 local prepDataset = require 'prepareDataset'
@@ -119,6 +121,8 @@ function trainSequence(model,Combined_CNN_RNN,baseCNN,criterion,personImages,sam
                 netInput[1][t]:copy(netInputA[{{t},{},{},{}}]:squeeze())
                 netInput[2][t]:copy(netInputB[{{t},{},{},{}}]:squeeze())
             end         
+            
+            --iterm.dot(graphgen(model, netInput), 'net.pdf')
 
             -- note that due to a problem with SuperCriterion we must cast
             -- from CUDA to double and back before passing data to/from the

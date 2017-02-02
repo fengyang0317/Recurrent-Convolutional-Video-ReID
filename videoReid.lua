@@ -69,8 +69,9 @@ cutorch.manualSeed(opt.seed)
 -- change these paths to point to the place where you store i-lids or prid datasets
 homeDir = paths.home
 if opt.dataset == 1 then
-    seqRootRGB = homeDir .. '/Documents/i-LIDS-VID/sequences/'
-    seqRootOF = homeDir .. '/Documents/i-LIDS-VID-OF-HVP/sequences/'
+    --seqRootRGB = homeDir .. '/Documents/i-LIDS-VID/sequences/'
+    seqRootRGB = '/home/yfeng23/lab/dataset/i-LIDS-VID/sequences/'
+    seqRootOF = '/home/yfeng23/lab/dataset/i-LIDS-VID-OF-HVP/sequences/'
 else
     seqRootRGB = homeDir .. '/Documents/PRID2011/multi_shot/'
     seqRootOF = homeDir .. '/Documents/PRID2011-OF-HVP/multi_shot/'
@@ -99,23 +100,31 @@ end
 -- build the model
 fullModel,criterion,Combined_CNN_RNN,baseCNN = buildModel_MeanPool_RNN(16,opt.nConvFilters,opt.nConvFilters,trainInds:size(1))
 
+print(fullModel)
+
 -- train the model
 trainedModel,trainedConvnet,trainedBaseNet = trainSequence(fullModel,Combined_CNN_RNN,baseCNN,criterion,dataset,nSamplesPerPerson,trainInds,testInds,nEpochs)
 
 -- save the Model and Convnet (which is part of the model) to a file
 saveFileNameModel = './trainedNets/fullModel_' .. opt.saveFileName .. '.dat'
-torch.save(saveFileNameModel,trainedModel)
 saveFileNameConvnet = './trainedNets/convNet_' .. opt.saveFileName .. '.dat'
-torch.save(saveFileNameConvnet,trainedConvnet)
 saveFileNameBasenet = './trainedNets/baseNet_' .. opt.saveFileName .. '.dat'
+
+---[[
+torch.save(saveFileNameModel,trainedModel)
+torch.save(saveFileNameConvnet,trainedConvnet)
 torch.save(saveFileNameBasenet,trainedBaseNet)
+--]]
+
+trainedConvnet = torch.load(saveFileNameBasenet)
 
 ------------------------------------------------------------------------------------------------------------------------------------
 -- Evaluation
 ------------------------------------------------------------------------------------------------------------------------------------
 
 trainedConvnet:evaluate()
-nTestImages = {1,2,4,8,16,32,64,128}
+--nTestImages = {1,2,4,8,16,32,64,128}
+nTestImages = {128}
 
 for n = 1,#nTestImages do
     print('test multiple images '..nTestImages[n])
